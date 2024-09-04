@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Inicial</title>
+    <title>Página con Formulario</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,7 +31,7 @@
             text-decoration: none;
         }
         main {
-            padding: 25px;
+            padding: 20px;
         }
         footer {
             background: #333;
@@ -41,6 +41,28 @@
             position: fixed;
             bottom: 0;
             width: 100%;
+        }
+        #formulario-datos {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .form-control {
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -55,28 +77,57 @@
     <a href="#servicios">Servicios</a>
     <a href="#sobre-nosotros">Sobre Nosotros</a>
     <a href="#contacto">Contacto</a>
+    <a href="#formulario" onclick="mostrarFormulario()">Formulario</a>
 </nav>
 
 <main>
     <h2>Introducción</h2>
     <p>Esta es la página inicial de tu sitio web. Aquí puedes incluir información relevante sobre tu empresa, servicios o cualquier tema que desees compartir con los visitantes.</p>
-    <section id="servicios">
-        <h3>Servicios</h3>
-        <p>Describe los servicios que ofreces y cómo pueden beneficiar a los usuarios.</p>
-    </section>
-    <section id="sobre-nosotros">
-        <h3>Sobre Nosotros</h3>
-        <p>Proporciona una breve historia o descripción de tu empresa.</p>
-    </section>
-    <section id="contacto">
-        <h3>Contacto</h3>
-        <p>Añade detalles de contacto o un formulario para que los visitantes puedan comunicarse contigo.</p>
+    
+    <section id="formulario-datos">
+        <h3>Formulario de Datos</h3>
+        <form id="datos-formulario">
+            <div class="form-control">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-control">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <button type="submit">Guardar</button>
+        </form>
     </section>
 </main>
 
 <footer>
     <p>&copy; 2024 Mi Página Web. Todos los derechos reservados.</p>
 </footer>
+
+<script>
+    // Mostrar el formulario al hacer clic en "Formulario"
+    function mostrarFormulario() {
+        document.getElementById('formulario-datos').style.display = 'block';
+    }
+
+    // Manejar el envío del formulario
+    document.getElementById('datos-formulario').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita la recarga de la página
+
+        // Obtener los valores de los campos
+        var nombre = document.getElementById('nombre').value;
+        var correo = document.getElementById('correo').value;
+
+        // Guardar los datos en el almacenamiento local (localStorage)
+        localStorage.setItem('nombre', nombre);
+        localStorage.setItem('correo', correo);
+
+        alert('Datos guardados exitosamente!');
+        
+        // Ocultar el formulario después de guardar
+        document.getElementById('formulario-datos').style.display = 'none';
+    });
+</script>
 
 </body>
 </html>
