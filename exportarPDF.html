@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOSPITAL REGIONAL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        img {
+            max-width: 100px;
+        }
+        h1 {
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://via.placeholder.com/100" alt="Logo del Hospital">
+    <h1>HOSPITAL REGIONAL</h1>
+</header>
+
+<table id="specialistsTable">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Especialidad</th>
+            <th>Teléfono</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Dr. Juan Pérez</td>
+            <td>Cardiología</td>
+            <td>987654321</td>
+        </tr>
+        <tr>
+            <td>Dra. Ana López</td>
+            <td>Neurología</td>
+            <td>987654322</td>
+        </tr>
+        <tr>
+            <td>Dr. Mario Sánchez</td>
+            <td>Gastroenterología</td>
+            <td>987654323</td>
+        </tr>
+    </tbody>
+</table>
+
+<button onclick="exportToPDF()">Exportar a PDF</button>
+
+<footer>
+    <p>Teléfono de contacto: 123-456-789</p>
+</footer>
+
+<!-- Scripts para exportar a PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const elementHTML = document.body;
+        html2canvas(elementHTML).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const imgProps = doc.getImageProperties(imgData);
+            const pdfWidth = doc.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            doc.save('hospital_regional.pdf');
+        });
+    }
+</script>
+
+</body>
+</html>
