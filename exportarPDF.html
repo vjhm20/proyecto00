@@ -90,24 +90,26 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Convertir la imagen del logo a base64
+        // Obtener la imagen del logo y esperar a que se cargue
         const logo = document.getElementById('logo');
         const logoSrc = logo.src;
 
-        // Crear una imagen nueva para cargarla
+        // Crear una nueva imagen para manejar CORS
         const img = new Image();
-        img.crossOrigin = 'Anonymous';
+        img.crossOrigin = 'Anonymous'; // Para evitar problemas de CORS
         img.src = logoSrc;
+
         img.onload = async function () {
+            // Convertir la imagen a base64
             const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
             canvas.width = img.width;
             canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
             const logoBase64 = canvas.toDataURL('image/png');
 
             // Añadir la imagen del logo al PDF
-            doc.addImage(logoBase64, 'PNG', 10, 10, 30, 30); // Ajusta las coordenadas y el tamaño según sea necesario
+            doc.addImage(logoBase64, 'PNG', 10, 10, 30, 30); // Ajusta la posición y tamaño
 
             // Añadir el título
             doc.setFontSize(22);
@@ -116,7 +118,7 @@
             // Capturar la tabla usando html2canvas
             try {
                 const tableElement = document.getElementById('specialistsTable');
-                const canvasTable = await html2canvas(tableElement);
+                const canvasTable = await html2canvas(tableElement, { scale: 2 }); // Escala para mejor resolución
                 const imgData = canvasTable.toDataURL('image/png');
                 const pdfWidth = doc.internal.pageSize.getWidth();
                 const imgProps = doc.getImageProperties(imgData);
@@ -135,7 +137,7 @@
             // Guardar el PDF
             doc.save('hospital_regional.pdf');
         };
-        
+
         img.onerror = function () {
             console.error('Error al cargar la imagen del logo.');
         };
@@ -144,3 +146,4 @@
 
 </body>
 </html>
+
