@@ -45,8 +45,8 @@
 <body>
 
 <header>
-    <img src="https://www.redsaludcuscosur.gob.pe/wp-content/uploads/2022/07/Hospital-Regional-Cusco.png" alt="Logo del Hospital">
-    <h1>HOSPITAL REGIONAL</h1>
+    <img id="logo" src="https://www.redsaludcuscosur.gob.pe/wp-content/uploads/2022/07/Hospital-Regional-Cusco.png" alt="Logo del Hospital">
+    <h1>HOSPITAL REGIONAL DEL CUSCO</h1>
 </header>
 
 <table id="specialistsTable">
@@ -89,13 +89,33 @@
     function exportToPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        const elementHTML = document.body;
-        html2canvas(elementHTML).then(canvas => {
+
+        // Añadir el logo
+        const logo = document.getElementById('logo');
+        const logoSrc = logo.src;
+
+        // Dibujar la imagen en el PDF
+        doc.addImage(logoSrc, 'PNG', 10, 10, 30, 30); // Ajuste de coordenadas y tamaño
+        
+        // Añadir el título
+        doc.setFontSize(22);
+        doc.text('HOSPITAL REGIONAL DEL CUSCO', 55, 25);
+
+        // Capturar la tabla y el pie de página con html2canvas
+        html2canvas(document.getElementById('specialistsTable')).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
-            const imgProps = doc.getImageProperties(imgData);
             const pdfWidth = doc.internal.pageSize.getWidth();
+            const imgProps = doc.getImageProperties(imgData);
             const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-            doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+            // Añadir la tabla al PDF
+            doc.addImage(imgData, 'PNG', 10, 50, pdfWidth - 20, pdfHeight);
+
+            // Añadir pie de página
+            doc.setFontSize(12);
+            doc.text('Teléfono de contacto: 123-456-789', 10, pdfHeight + 60); // Ajuste de posición
+            
+            // Guardar el PDF
             doc.save('hospital_regional.pdf');
         });
     }
