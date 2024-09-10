@@ -90,38 +90,55 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Obtener la imagen del logo
+        // Convertir la imagen del logo a base64
         const logo = document.getElementById('logo');
         const logoSrc = logo.src;
 
-        // Añadir la imagen del logo al PDF
-        doc.addImage(logoSrc, 'PNG', 10, 10, 30, 30); // Ajusta las coordenadas y el tamaño según sea necesario
+        // Crear una imagen nueva para cargarla
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = logoSrc;
+        img.onload = async function () {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            const logoBase64 = canvas.toDataURL('image/png');
+
+            // Añadir la imagen del logo al PDF
+            doc.addImage(logoBase64, 'PNG', 10, 10, 30, 30); // Ajusta las coordenadas y el tamaño según sea necesario
+
+            // Añadir el título
+            doc.setFontSize(22);
+            doc.text('HOSPITAL REGIONAL DEL CUSCO', 55, 25);
+
+            // Capturar la tabla usando html2canvas
+            try {
+                const tableElement = document.getElementById('specialistsTable');
+                const canvasTable = await html2canvas(tableElement);
+                const imgData = canvasTable.toDataURL('image/png');
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const imgProps = doc.getImageProperties(imgData);
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                // Añadir la tabla al PDF
+                doc.addImage(imgData, 'PNG', 10, 50, pdfWidth - 20, pdfHeight);
+            } catch (error) {
+                console.error('Error al capturar la tabla: ', error);
+            }
+
+            // Añadir pie de página
+            doc.setFontSize(12);
+            doc.text('Teléfono de contacto: 123-456-789', 10, doc.internal.pageSize.getHeight() - 10);
+
+            // Guardar el PDF
+            doc.save('hospital_regional.pdf');
+        };
         
-        // Añadir el título
-        doc.setFontSize(22);
-        doc.text('HOSPITAL REGIONAL', 55, 25);
-
-        // Capturar la tabla usando html2canvas
-        try {
-            const tableElement = document.getElementById('specialistsTable');
-            const canvas = await html2canvas(tableElement);
-            const imgData = canvas.toDataURL('image/png');
-            const pdfWidth = doc.internal.pageSize.getWidth();
-            const imgProps = doc.getImageProperties(imgData);
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-            // Añadir la tabla al PDF
-            doc.addImage(imgData, 'PNG', 10, 50, pdfWidth - 20, pdfHeight);
-        } catch (error) {
-            console.error('Error al capturar la tabla: ', error);
-        }
-
-        // Añadir pie de página
-        doc.setFontSize(12);
-        doc.text('Teléfono de contacto: 123-456-789', 10, doc.internal.pageSize.getHeight() - 10);
-
-        // Guardar el PDF
-        doc.save('hospital_regional.pdf');
+        img.onerror = function () {
+            console.error('Error al cargar la imagen del logo.');
+        };
     }
 </script>
 
